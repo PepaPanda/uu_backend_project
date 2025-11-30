@@ -41,7 +41,6 @@ app.use((err, req, res, next) => {
 
   // fallback – non-expected errors
   res.status(500).json({ message: "Internal server error" });
-  console.log(err);
 });
 
 export default app;
