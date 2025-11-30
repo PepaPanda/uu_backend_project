@@ -5,7 +5,7 @@ import { findShoppingListById } from "../repository/shoppinglist.repository.js";
 export const authorizeUserById = (req, res, next) => {
   try {
     const { _id: actualUserId } = req.user;
-    const { userid: requestedUserId } = req.params;
+    const { userId: requestedUserId } = req.params;
 
     if (actualUserId !== requestedUserId)
       throw new UnauthorizedError("You cannot access this resource");

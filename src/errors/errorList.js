@@ -16,7 +16,7 @@ export class NotFoundError extends AppError {
 
 export class DuplicateRecordError extends AppError {
   constructor(details) {
-    super("Same record already exists", 422, "DB_DUPLICATE", {
+    super("Same record already exists", 409, "DB_DUPLICATE", {
       details,
     });
   }

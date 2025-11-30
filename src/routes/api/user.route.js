@@ -5,6 +5,7 @@ import {
   getUserDetails,
   editUserDetails,
   register,
+  getUserShoppingLists,
 } from "../../controllers/user.controller.js";
 
 //middleware
@@ -22,10 +23,10 @@ const userRouter = Router();
 
 userRouter.post("/register", validateBody(registerUserSchema), register);
 
-userRouter.get("/:userid", authenticate, authorizeUserById, getUserDetails);
+userRouter.get("/:userId", authenticate, authorizeUserById, getUserDetails);
 
 userRouter.patch(
-  "/:userid",
+  "/:userId",
   validateBody(editUserSchema),
   authenticate,
   authorizeUserById,
@@ -33,10 +34,10 @@ userRouter.patch(
 );
 
 userRouter.get(
-  "/:userid/shoppinglist",
+  "/:userId/shoppinglist",
   authenticate,
   authorizeUserById,
-  getUserDetails
+  getUserShoppingLists
 );
 
 export default userRouter;

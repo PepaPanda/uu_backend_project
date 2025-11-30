@@ -26,7 +26,7 @@ export const register = async (req, res, next) => {
 
     if (!dbResult.acknowledged) throw new DbWriteError(dbResult);
 
-    res.send({ _id: dbResult.insertedId });
+    res.status(201).json({ _id: dbResult.insertedId });
   } catch (err) {
     next(err);
   }
@@ -52,6 +52,16 @@ export const editUserDetails = async (req, res, next) => {
     if (!dbResult.acknowledged) throw new DbWriteError(dbResult);
 
     res.status(200);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getUserShoppingLists = async (req, res, next) => {
+  try {
+    const { _id: id } = req.user;
+
+    res.status(200).json({ _id: id });
   } catch (err) {
     next(err);
   }

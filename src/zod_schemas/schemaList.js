@@ -92,9 +92,9 @@ export const registerUserSchema = user.omit({
   createdAt: true,
 });
 
-export const loginUserSchema = registerUserSchema.omit({
-  firstName: true,
-  lastName: true,
+export const loginUserSchema = user.pick({
+  email: true,
+  password: true,
 });
 
 export const editUserSchema = user.pick({
