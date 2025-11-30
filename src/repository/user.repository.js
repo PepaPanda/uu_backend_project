@@ -2,20 +2,13 @@ import { mongo } from "./connect.js";
 
 //Utils
 import { removeUndefinedObjectFields, toObjectId } from "../helpers/utils.js";
-import { password } from "../zod_schemas/schemaList.js";
 
 export const findUserByEmail = async (email) => {
   try {
     const client = await mongo;
-    const result = await client
-      .db()
-      .collection("users")
-      .findOne(
-        {
-          email: email,
-        },
-        { projection: { password: 0 } }
-      );
+    const result = await client.db().collection("users").findOne({
+      email: email,
+    });
 
     return {
       ...result,

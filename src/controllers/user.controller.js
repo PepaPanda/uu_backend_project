@@ -35,7 +35,11 @@ export const register = async (req, res, next) => {
 export const getUserDetails = async (req, res, next) => {
   try {
     const user = await findUserByEmail(req.user.email);
-    if (user) res.json(user);
+    if (!user) throw new NotFoundError("User not found");
+
+    const { password, ...safeUser } = user;
+
+    res.json(safeUser);
   } catch (err) {
     next(err);
   }
