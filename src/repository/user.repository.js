@@ -1,7 +1,12 @@
 import { mongo } from "./connect.js";
 
 //Utils
-import { removeUndefinedObjectFields, toObjectId } from "../helpers/utils.js";
+import {
+  removeUndefinedObjectFields,
+  parseDbResult,
+  toMongoObjectId,
+  parseDbResultInsert,
+} from "../helpers/utils.js";
 
 export const findUserByEmail = async (email) => {
   try {
@@ -10,10 +15,23 @@ export const findUserByEmail = async (email) => {
       email: email,
     });
 
-    return {
-      ...result,
-      _id: result._id.toString(),
-    };
+    return parseDbResult(result);
+  } catch (err) {
+    return { error: err.code };
+  }
+};
+
+export const findUserById = async (id) => {
+  try {
+    const client = await mongo;
+    const result = await client
+      .db()
+      .collection("users")
+      .findOne({
+        _id: toMongoObjectId(id),
+      });
+
+    return parseDbResult(result);
   } catch (err) {
     return { error: err.code };
   }
@@ -32,7 +50,7 @@ export const createNewUser = async (user) => {
       invitationList: [],
     });
 
-    return result;
+    return parseDbResultInsert(result);
   } catch (err) {
     return { error: err.code };
   }
@@ -45,19 +63,85 @@ export const updateExistingUser = async (id, data) => {
       lastName: data.lastName,
     };
 
+    const { firstName, lastName } = allowedFields;
+
+    let userUpdate;
+    let listUpdateMember;
+    let listUpdateOwner;
+
     const client = await mongo;
-    const result = await client
+
+    userUpdate = await client
       .db()
       .collection("users")
       .updateOne(
         {
-          id: toObjectId(id),
+          _id: toMongoObjectId(id),
         },
         { $set: removeUndefinedObjectFields(allowedFields) }
       );
 
-    return result;
+    listUpdateMember = await client
+      .db()
+      .collection("shopping_lists")
+      .updateMany(
+        { "members._id": toMongoObjectId(id) },
+        { $set: { "members.$.name": `${firstName} ${lastName}` } }
+      );
+
+    listUpdateOwner = await client
+      .db()
+      .collection("shopping_lists")
+      .updateMany(
+        { "owner._id": toMongoObjectId(id) },
+        { $set: { "owner.name": `${firstName} ${lastName}` } }
+      );
+
+    return { userUpdate, listUpdateMember, listUpdateOwner };
   } catch (err) {
+    console.log(err);
     return { error: err.code };
   }
+};
+
+export const addListToInvitations = async ({ listId, userId, listOwner }) => {
+  const client = await mongo;
+  const result = await client
+    .db()
+    .collection("users")
+    .updateOne(
+      {
+        _id: toMongoObjectId(userId),
+        "invitationList.listId": { $ne: listId },
+      },
+      {
+        $addToSet: {
+          invitationList: {
+            listId: listId,
+            invitedBy: listOwner,
+            invitedAt: Date(),
+          },
+        },
+      }
+    );
+
+  return result;
+};
+
+export const removeInvitation = async (userId, listId) => {
+  const client = await mongo;
+  const result = await client
+    .db()
+    .collection("users")
+    .updateOne(
+      {
+        _id: toMongoObjectId(userId),
+        "invitationList.listId": listId,
+      },
+      {
+        $pull: { invitationList: { listId: listId } },
+      }
+    );
+
+  return result;
 };

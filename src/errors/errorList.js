@@ -6,6 +6,12 @@ export class BodyValidationError extends AppError {
   }
 }
 
+export class InvalidPayloadError extends AppError {
+  constructor(details) {
+    super("Data passed are not valid", 422, "INVALID_DATA", { details });
+  }
+}
+
 export class NotFoundError extends AppError {
   constructor(details) {
     super("The requested content could not be found", 404, "NOT_FOUND", {

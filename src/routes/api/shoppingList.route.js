@@ -69,7 +69,7 @@ shoppingListRouter.get(
 shoppingListRouter.patch(
   "/:listId/user/:userId/remove",
   authenticate,
-  authorizeShoppingListOwner,
+  authorizeShoppingListUser,
   removeListUser
 );
 shoppingListRouter.patch(

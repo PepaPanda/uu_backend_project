@@ -5,10 +5,10 @@ import helmet from "helmet";
 import cors from "cors";
 import apiRouter from "./routes/api.route.js";
 import cookieParser from "cookie-parser";
+import { nonExistentEndpoint } from "./middleware/nonExistentEndpoint.js";
 
 //Errors
 import { AppError } from "./errors/AppError.js";
-import { NotFoundError } from "./errors/errorList.js";
 
 const app = express();
 
@@ -20,10 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", apiRouter);
 
-app.use((req, res, next) => {
-  const err = new NotFoundError("This endpoint does not exist");
-  return next(err);
-});
+app.use(nonExistentEndpoint);
 
 app.use((err, req, res, next) => {
   if (err instanceof AppError) {
@@ -40,6 +37,7 @@ app.use((err, req, res, next) => {
   }
 
   // fallback – non-expected errors
+  console.log(err);
   res.status(500).json({ message: "Internal server error" });
 });
 

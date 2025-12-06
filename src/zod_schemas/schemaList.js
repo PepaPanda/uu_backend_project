@@ -2,13 +2,6 @@ import * as z from "zod";
 
 export const shoppingListStatusEnum = z.enum(["active", "archived"]);
 
-export const invitationListStatusEnum = z.enum([
-  "pending",
-  "accepted",
-  "declined",
-  "cancelled",
-]);
-
 const mongoId = z.string().regex(/^[a-fA-F0-9]{24}$/, "Invalid mongo id");
 
 const nonEmptyString = z.string().min(1, "Cannot be empty");
@@ -68,9 +61,8 @@ export const editShoppingListSchema = shoppingList.pick({
 });
 
 export const invitation = z.object({
-  _id: mongoId,
-  status: invitationListStatusEnum,
-  invitedByUserId: mongoId,
+  listId: mongoId,
+  invitedBy: nonEmptyString.max(30),
   invitedAt: z.iso.datetime(),
 });
 

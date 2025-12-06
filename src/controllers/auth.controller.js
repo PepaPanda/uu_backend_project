@@ -27,7 +27,7 @@ export const login = async (req, res, next) => {
         sameSite: "lax",
         maxAge: parseInt(process.env.JWT_LIFETIME) || 1000 * 60 * 15,
       })
-      .send();
+      .json({ _id });
   } catch (err) {
     next(err);
   }

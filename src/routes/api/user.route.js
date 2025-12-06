@@ -6,6 +6,8 @@ import {
   editUserDetails,
   register,
   getUserShoppingLists,
+  acceptInvitation,
+  declineInvitation,
 } from "../../controllers/user.controller.js";
 
 //middleware
@@ -38,6 +40,19 @@ userRouter.get(
   authenticate,
   authorizeUserById,
   getUserShoppingLists
+);
+
+//These two endpoints were not described in the previous HW, but is needed (I didn't realize it before)
+userRouter.patch(
+  "/invitation/:shoppingListId/accept",
+  authenticate,
+  acceptInvitation
+);
+
+userRouter.patch(
+  "/invitation/:shoppingListId/decline",
+  authenticate,
+  declineInvitation
 );
 
 export default userRouter;

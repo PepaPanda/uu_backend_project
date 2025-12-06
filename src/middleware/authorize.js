@@ -22,11 +22,10 @@ export const authorizeShoppingListUser = async (req, res, next) => {
     const { listId: requestedListId } = req.params;
 
     const shoppingList = await findShoppingListById(requestedListId);
-
     if (!shoppingList) throw new NotFoundError("Shopping List not found");
 
     const isUserMember = !!shoppingList.members.find(
-      (member) => member._id === actualUserId
+      (member) => member._id.toString() === actualUserId
     );
 
     if (!isUserMember)
@@ -48,7 +47,7 @@ export const authorizeShoppingListOwner = async (req, res, next) => {
 
     if (!shoppingList) throw new NotFoundError("Shopping List not found");
 
-    const isUserOwner = shoppingList.owner._id === actualUserId;
+    const isUserOwner = shoppingList.owner._id.toString() === actualUserId;
 
     if (!isUserOwner)
       throw new UnauthorizedError("You are not the owner of this list");
