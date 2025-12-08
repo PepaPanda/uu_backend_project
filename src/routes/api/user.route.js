@@ -25,7 +25,7 @@ const userRouter = Router();
 
 userRouter.post("/register", validateBody(registerUserSchema), register);
 
-userRouter.get("/", authenticate, getUserDetails);
+userRouter.get("/", authenticate, getUserDetails); // This endpoint was changed and is different from the first idea described in the UU portal. To simplify frontend interaction, remove url param and authorization - simply authentication is enough.
 
 userRouter.patch(
   "/:userId",
