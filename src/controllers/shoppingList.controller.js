@@ -44,7 +44,7 @@ export const create = async (req, res, next) => {
 export const getList = async (req, res, next) => {
   try {
     const list = req.shoppingList;
-    if (!list) throw new NotFoundError("List not found");
+    if (!list) throw new NotFoundError("Shopping list not found");
 
     res.json(list);
   } catch (err) {
