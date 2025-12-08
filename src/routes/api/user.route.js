@@ -25,7 +25,7 @@ const userRouter = Router();
 
 userRouter.post("/register", validateBody(registerUserSchema), register);
 
-userRouter.get("/:userId", authenticate, authorizeUserById, getUserDetails);
+userRouter.get("/", authenticate, getUserDetails);
 
 userRouter.patch(
   "/:userId",
