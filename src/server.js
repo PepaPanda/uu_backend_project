@@ -10,10 +10,15 @@ import { nonExistentEndpoint } from "./middleware/nonExistentEndpoint.js";
 //Errors
 import { AppError } from "./errors/AppError.js";
 
+let { DEV_ENV } = process.env;
+DEV_ENV = DEV_ENV === "true";
+
 const app = express();
 
 app.use(helmet());
-app.use(cors());
+DEV_ENV &&
+  app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+!DEV_ENV && app.use(cors);
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

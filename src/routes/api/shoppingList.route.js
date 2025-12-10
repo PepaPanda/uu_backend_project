@@ -14,6 +14,7 @@ import {
   createItemSchema,
   editItemSchema,
   editShoppingListSchema,
+  inviteMemberSchema,
 } from "../../zod_schemas/schemaList.js";
 
 //Controllers
@@ -73,7 +74,8 @@ shoppingListRouter.patch(
   removeListUser
 );
 shoppingListRouter.patch(
-  "/:listId/user/:userId/invite",
+  "/:listId/user/invite",
+  validateBody(inviteMemberSchema),
   authenticate,
   authorizeShoppingListOwner,
   inviteListUser

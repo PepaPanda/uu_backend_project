@@ -123,20 +123,25 @@ export const removeListUser = async (req, res, next) => {
 
 export const inviteListUser = async (req, res, next) => {
   try {
-    const { listId, userId } = req.params;
+    const { listId } = req.params;
+    const { owner } = req.shoppingList;
 
-    if (req.user._id === userId)
+    const { email } = req.body;
+
+    if (email === owner.email)
       throw new InvalidPayloadError("Cannot invite yourself");
 
     const dbResult = await addListToInvitations({
       listId,
-      userId,
-      listOwner: req.shoppingList.owner.name,
+      userEmail: email,
+      listOwner: owner.name,
     });
 
     if (!dbResult.acknowledged) throw new DbWriteError(dbResult);
     if (dbResult.matchedCount === 0)
-      throw new DuplicateRecordError("User already invited");
+      throw new DuplicateRecordError(
+        "User does not exist or this e-mail has already been invited"
+      );
     res.status(200).send();
   } catch (err) {
     next(err);

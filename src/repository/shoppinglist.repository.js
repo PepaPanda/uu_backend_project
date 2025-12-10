@@ -90,14 +90,28 @@ export const deleteShoppingListById = async (id) => {
 
 export const updateExistingShoppingList = async (id, data) => {
   try {
+    const client = await mongo;
+
+    //Query 1 - retrieve the shoping list first
+    const doc = await client
+      .db()
+      .collection("shopping_lists")
+      .findOne({ _id: toMongoObjectId(id) });
+
+    if (!doc) return null;
+
     const allowedFields = {
       name: data.name,
       status: data.status,
       archivedAt:
-        data.status === "archived" && data.archivedAt === null ? Date() : null,
+        data.status === "active"
+          ? null
+          : data.status === "archived" && doc.status === "active"
+          ? Date()
+          : doc.archivedAt,
     };
 
-    const client = await mongo;
+    //Query 2 set the shopping list
     const result = await client
       .db()
       .collection("shopping_lists")

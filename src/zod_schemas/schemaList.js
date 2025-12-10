@@ -93,3 +93,5 @@ export const editUserSchema = user.pick({
   firstName: true,
   lastName: true,
 });
+
+export const inviteMemberSchema = user.pick({ email: true });

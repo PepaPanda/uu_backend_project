@@ -104,14 +104,18 @@ export const updateExistingUser = async (id, data) => {
   }
 };
 
-export const addListToInvitations = async ({ listId, userId, listOwner }) => {
+export const addListToInvitations = async ({
+  listId,
+  userEmail,
+  listOwner,
+}) => {
   const client = await mongo;
   const result = await client
     .db()
     .collection("users")
     .updateOne(
       {
-        _id: toMongoObjectId(userId),
+        email: userEmail,
         "invitationList.listId": { $ne: listId },
       },
       {

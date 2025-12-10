@@ -4,6 +4,7 @@ import { NotFoundError, AuthFailedError } from "../errors/errorList.js";
 
 import { generateToken } from "../helpers/jwt.js";
 
+const { DEV_ENV } = process.env;
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
@@ -23,11 +24,28 @@ export const login = async (req, res, next) => {
     res
       .cookie("access_token", token, {
         httpOnly: true,
-        secure: true,
+        secure: DEV_ENV !== "true",
         sameSite: "lax",
-        maxAge: parseInt(process.env.JWT_LIFETIME) || 1000 * 60 * 15,
+        maxAge: 1000 * 60 * 60,
+        path: "/",
       })
       .json({ _id });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const logout = async (req, res, next) => {
+  try {
+    res
+      .clearCookie("access_token", {
+        httpOnly: true,
+        secure: DEV_ENV !== "true",
+        sameSite: "lax",
+        path: "/",
+      })
+      .status(200)
+      .send();
   } catch (err) {
     next(err);
   }
