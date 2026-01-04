@@ -104,7 +104,7 @@ export const removeListUser = async (req, res, next) => {
         "Only owner can delete anyone, and members only themselves"
       );
 
-    if (owner._id === userId)
+    if (owner._id.toString() === userId)
       throw new InvalidPayloadError("Cannot delete list owner from members");
 
     const dbResult = await deleteListUser(listId, userId);
